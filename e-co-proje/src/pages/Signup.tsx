@@ -15,7 +15,7 @@ const Signup: React.FC = () => {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const res = await dispatch(signup({ email, password }));
-    if (signup.fulfilled.match(res)) navigate("/account");
+    if (signup.fulfilled.match(res)) navigate("/verify-email");
   };
 
   return (

@@ -11,7 +11,7 @@ import NotFound from './pages/Notfound'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
-
+import VerifyEmail from './pages/VerifyEmail'
 
 
 
@@ -26,8 +26,9 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/products" element={<Products />} />
-          <Route path="/login" element={<Login />} />
-  <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/cart" element={
           <ProtectedRoute> 
             <Cart />
