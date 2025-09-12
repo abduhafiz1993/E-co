@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchProductById } from "../features/products/Productslice";
+import { addToCart } from "../features/cart/cartslice";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -17,7 +18,6 @@ const ProductDetail = () => {
   }, [dispatch, id]);
 
   if (loading) return <p>Loading product...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
   if (!product) return <p>Product not found.</p>;
 
   return (
@@ -30,7 +30,18 @@ const ProductDetail = () => {
       <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
       <p className="text-gray-700 mb-4">{product.description}</p>
       <p className="text-xl font-semibold mb-6">${product.price}</p>
-      <button className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+      <button
+        onClick={() =>
+          dispatch(
+            addToCart({
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image_url: product.image_url,
+            })
+          )
+        }
+       className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
         Add to Cart
       </button>
     </div>
