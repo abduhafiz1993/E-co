@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ShoppingCart, Menu, X, User} from "lucide-react";
+import { useAppSelector } from "../store/hooks";
+
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const user = useAppSelector((s) => s.auth.user);
 
   return (
     <nav className="bg-white shadow-md px-6 py-4">
@@ -53,13 +54,14 @@ const Navbar: React.FC = () => {
             <ShoppingCart size={20} />
           </Link>
           {/* Auth Section */}
-          {isLoggedIn ? (
+          {user ? (
             <Link
               to="/account"
               className="flex items-center gap-2 border px-3 py-2 rounded-lg hover:bg-gray-100"
               onClick={() => setIsOpen(false)}
             >
               <User size={20} />
+              <span>{user.email ?? ""}</span>
             </Link>
           ) : (
             <div className="flex gap-2">
