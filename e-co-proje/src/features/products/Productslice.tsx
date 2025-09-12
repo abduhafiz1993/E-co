@@ -1,72 +1,80 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { supabase } from '../../lib/supabaseClient';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { supabase } from "../../lib/supabaseClient";
 
-export interface Product {
+interface Product {
   id: string;
-  product_name: string;
-  category_id: string;
-  product_image: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
 }
 
-interface ProductState {
-  products: Product[];
+interface ProductsState {
+  items: Product[];
+  single: Product | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialState: ProductState = {
-  products: [],
+const initialState: ProductsState = {
+  items: [],
+  single: null,
   loading: false,
   error: null,
 };
 
-// Async thunk to fetch products
-export const fetchProducts = createAsyncThunk(
-  'products/fetchProducts',
-  async () => {
+// Fetch all products
+export const fetchProducts = createAsyncThunk("products/fetchAll", async () => {
+  const { data, error } = await supabase.from("products").select("*");
+  if (error) throw error;
+  return data as Product[];
+});
+
+// Fetch single product
+export const fetchProductById = createAsyncThunk(
+  "products/fetchById",
+  async (id: string) => {
     const { data, error } = await supabase
-      .from('products')
-      .select(`
-        id,
-        product_name,
-        category_id,
-        product_image,
-        categories(name)
-      `);
-    if (error) throw new Error(error.message);
-
-    // Map product_image path to public URL
-    const productsWithUrl = data.map((product: any) => {
-      const { data: urlData } = supabase
-        .storage
-        .from('product-images')
-        .getPublicUrl(product.product_image);
-      return { ...product, product_image: urlData.publicUrl };
-    });
-
-    return productsWithUrl;
+      .from("products")
+      .select("*")
+      .eq("id", id)
+      .single();
+    if (error) throw error;
+    return data as Product;
   }
 );
 
-const productSlice = createSlice({
-  name: 'products',
+const productsSlice = createSlice({
+  name: "products",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // all products
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload;
+        state.items = action.payload;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Something went wrong';
+        state.error = action.error.message || "Failed to fetch products";
+      })
+      // single product
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.single = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch product";
       });
   },
 });
 
-export default productSlice.reducer;
+export default productsSlice.reducer;
