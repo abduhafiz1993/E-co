@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { clearCart } from "../features/cart/cartslice";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 const CheckoutPage: React.FC = () => {
   const cartItems = useAppSelector((state) => state.cart.items);
+  const user = useAppSelector((state) => state.auth.user);
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -24,7 +26,7 @@ const CheckoutPage: React.FC = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!form.name || !form.email || !form.address) {
@@ -32,15 +34,36 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    // Simulate placing an order
-    console.log("🛍️ Order placed:", {
-      customer: form,
-      items: cartItems,
-      total,
-    });
+    if (!user) {
+      alert("You must be logged in to place an order");
+      return;
+    }
 
-    dispatch(clearCart()); // clear cart after checkout
-    navigate("/order-success");
+    try {
+      // Save order into Supabase
+      const { error } = await supabase.from("orders").insert([
+        {
+          user_id: user.id,
+          items: cartItems,
+          total,
+          status: "pending",
+        },
+      ]);
+
+      if (error) throw error;
+
+      console.log("🛍️ Order placed:", {
+        customer: form,
+        items: cartItems,
+        total,
+      });
+
+      dispatch(clearCart()); // clear cart after checkout
+      navigate("/order-success");
+    } catch (err) {
+      console.error("❌ Error placing order:", err);
+      alert("Could not place order. Try again later.");
+    }
   };
 
   return (
@@ -96,4 +119,3 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
-
