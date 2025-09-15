@@ -13,7 +13,8 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import VerifyEmail from './pages/VerifyEmail'
 import ProductDetail from "./pages/ProductDetail";
-
+import CheckoutPage from './pages/Checkout'
+import OrderSuccess from './pages/Order-Success'
 
 
 
@@ -46,6 +47,17 @@ function App() {
         <Route path="/checkout" element={
           <ProtectedRoute>
           <Checkout />
+          </ProtectedRoute>
+          } />
+        <Route path="/checkout" element={
+         <ProtectedRoute> 
+          <CheckoutPage />
+         </ProtectedRoute> 
+          } />
+
+        <Route path="/order-success" element={
+          <ProtectedRoute>
+          <OrderSuccess />
           </ProtectedRoute>
           } />
         <Route path="*" element={<NotFound />} />

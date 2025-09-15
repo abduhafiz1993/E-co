@@ -1,6 +1,10 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { increaseQuantity, decreaseQuantity, removeFromCart, clearCart } from "../features/cart/cartslice";
+import { Link } from "react-router-dom";
+
+
+
 
 const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -74,6 +78,11 @@ const Cart: React.FC = () => {
           Clear Cart
         </button>
         <div className="text-xl font-bold">Total: ${total.toFixed(2)}</div>
+        {cartItems.length > 0 && (
+        <Link to="/checkout">
+        <button>Proceed to Checkout</button>
+        </Link>
+          )}
       </div>
     </div>
   );
