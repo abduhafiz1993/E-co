@@ -5,7 +5,7 @@ import Contact from './pages/Contact'
 import Navbar from './components/Navbar'
 import Products from './pages/Product'
 import Cart from './pages/Cart'
-import Account from './pages/Account'
+import ProfilePage from './pages/Account'
 import Checkout from './pages/Checkout'
 import NotFound from './pages/Notfound'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -15,6 +15,7 @@ import VerifyEmail from './pages/VerifyEmail'
 import ProductDetail from "./pages/ProductDetail";
 import CheckoutPage from './pages/Checkout'
 import OrderSuccess from './pages/Order-Success'
+import OrdersPage from './pages/Orders'
 
 
 
@@ -35,13 +36,18 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/orders" element={
+          <ProtectedRoute>
+            <OrdersPage />
+          </ProtectedRoute>
+        } />
         <Route path="/cart" element={
           <ProtectedRoute> 
             <Cart />
           </ProtectedRoute>} />
         <Route path="/account" element={
           <ProtectedRoute>
-            <Account />
+            <ProfilePage />
           </ProtectedRoute> 
           } />
         <Route path="/checkout" element={
